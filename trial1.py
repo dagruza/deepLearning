@@ -62,7 +62,7 @@ def main():
     B_List = splitArray(Desired_Band_B)
     
     # Going through each list and creating a 75,75,6 for the two bands
-    for i in range(0,5):
+    for i in range(0,8):
         if i < 3:
             imageLabel[0,:,:,i] = np.array(A_List[i], dtype=float)
         else:
@@ -97,6 +97,9 @@ def main():
 
     print( model.output_shape)
     model.fit(x=L_input, y=imageLabel, batch_size=1, epochs=100)
+
+    testing = model.predict(L_input)
+
 #^-----------------------------------------------------------------------------main()
     
 
