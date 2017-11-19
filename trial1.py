@@ -52,7 +52,7 @@ def main():
     Desired_Band_B = np.array(labImage[:,:,2], dtype=float)/128.0
 
     # For the labels, must split 225,225,1 into 75,75,6 !!!
-    imageLabel = np.zeros((1,75,75,6))
+    imageLabel = np.zeros((1,75,75,9))
 
     #Splitting bands A and B into 3 equal sized arrays len=75
     A_List = []
@@ -90,7 +90,7 @@ def main():
     model.add(MaxPooling2D(pool_size=(2,2)))
     model.add(Convolution2D(4,(3,3), activation='relu'))
 
-    model.add(Convolution2D(6,(3,3), activation='tanh'))
+    model.add(Convolution2D(9,(3,3), activation='tanh'))
     #model.compile(optimizer='rmsprop', loss='mse')
     sgd = SGD(lr=1e-4, momentum=0.9)
     model.compile(optimizer=sgd, loss='binary_crossentropy', metrics=['accuracy'])
@@ -101,13 +101,20 @@ def main():
     
 
 def splitArray(arrayToSplit):
-    """Function to split an array of [225,225] into 3 equal arrays of [75,75].
+    """Function to split an array of [225,225] into 9 equal arrays of [75,75].
+    An image is broken up into a grid of 75x75 portions.
     IN: A [225,225] list or np.array
-    OUT: A python list of 3 np.arrays of size [75,75]"""
+    OUT: A python list of 9 np.arrays of size [75,75]"""
 
     retList = []
     retList.append(arrayToSplit[0:75, 0:75])
+    retList.append(arrayToSplit[0:75, 75:150])
+    retList.append(arrayToSplit[0:75, 150:225])
+    retList.append(arrayToSplit[75:150, 0:75])
     retList.append(arrayToSplit[75:150, 75:150])
+    retList.append(arrayToSplit[75:150, 150:225])
+    retList.append(arrayToSplit[150:225, 0:75])
+    retList.append(arrayToSplit[150:225, 75:150])
     retList.append(arrayToSplit[150:225, 150:225])
     return retList
 #^-----------------------------------------------------------------------------splitArray(arrayToSplit)
