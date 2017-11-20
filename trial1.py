@@ -51,8 +51,9 @@ def main():
     Desired_Band_A = np.array(labImage[:,:,1], dtype=float)/128.0
     Desired_Band_B = np.array(labImage[:,:,2], dtype=float)/128.0
 
-    # For the labels, must split 225,225,1 into 75,75,6 !!!
-    imageLabel = np.zeros((1,75,75,9))
+    # For the labels, must split 225,225,1 into 75,75,18 !!!
+    # Each Band is split up into 9 channels of 1x75x75 so there is 18 bands total for both bands
+    imageLabel = np.zeros((1,75,75,18))
 
     #Splitting bands A and B into 3 equal sized arrays len=75
     A_List = []
@@ -98,7 +99,41 @@ def main():
     print( model.output_shape)
     model.fit(x=L_input, y=imageLabel, batch_size=1, epochs=100)
 
-    testing = model.predict(L_input)
+    #testing = model.predict(L_input)
+        # Output colorizations
+    output = model.predict(L_input)
+    output = output * 128
+    canvas = np.zeros((225, 225, 3))
+    
+    #Add L input
+    canvas[:,:,0] = L_input[0][:,:,0]
+
+    #Output the A band
+    canvas[0:75, 0:75, 1] = output[0][:,:,0]
+    canvas[0:75, 75:150, 1] = output[0][:,:,1]
+    canvas[0:75, 150:225, 1] = output[0][:,:,2]
+    canvas[75:150, 0:75, 1] = output[0][:,:,3]
+    canvas[75:150, 75:150, 1] = output[0][:,:,4]
+    canvas[75:150, 150:225, 1] = output[0][:,:,5]
+    canvas[150:225, 0:75, 1] = output[0][:,:,6]
+    canvas[150:225, 75:150, 1] = output[0][:,:,7]
+    canvas[150:225, 150:225, 1] = output[0][:,:,8]
+
+    #Output the B band
+    canvas[0:75, 0:75, 2] = output[0][:,:,9]
+    canvas[0:75, 75:150, 2] = output[0][:,:,10]
+    canvas[0:75, 150:225, 2] = output[0][:,:,11]
+    canvas[75:150, 0:75, 2] = output[0][:,:,12]
+    canvas[75:150, 75:150, 2] = output[0][:,:,13]
+    canvas[75:150, 150:225, 2] = output[0][:,:,14]
+    canvas[150:225, 0:75, 2] = output[0][:,:,15]
+    canvas[150:225, 75:150, 2] = output[0][:,:,16]
+    canvas[150:225, 150:225, 2] = output[0][:,:,17]
+
+    #Output saved image
+    imsave("img_result.jpg", color.lab2rgb(canvas))
+    #imsave("img_gray_scale.jpg", rgb2gray(lab2rgb(cur)))
+    
 
 #^-----------------------------------------------------------------------------main()
     
